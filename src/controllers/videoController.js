@@ -8,13 +8,28 @@ export const home = async (req, res) => {
 };
 export const watch = async (req, res) => {
   const { id } = req.params;
-  const video = await Video.findById(id).populate('owner').populate('comments');
-  console.log(video);
+  const video = await Video.findById(id)
+    .populate('owner')
+    .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'owner',
+        populate: {
+          path: 'username',
+        },
+      },
+    });
   if (!video) {
-    return res.render('404', { pageTitle: 'Video not found.' });
+    return res.status(404).render('404', { pageTitle: 'Video not found.' });
   }
-  return res.render('watch', { pageTitle: video.title, video });
+  return res.render('watch', {
+    pageTitle: video.title,
+    video,
+    _id: req.session.user ? req.session.user._id : null,
+  });
 };
+
 export const getEdit = async (req, res) => {
   const { id } = req.params;
   const {
