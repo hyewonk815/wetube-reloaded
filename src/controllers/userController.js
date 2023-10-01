@@ -131,16 +131,11 @@ export const finishGithubLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  console.log('logout is running');
+  req.flash('info', 'Bye Bye');
   req.session.destroy();
-  req.session.user = null;
-  res.locals.loggedInUser = null;
-  req.session.loggedIn = false;
-
-  req.flash('info', 'See you');
-
   return res.redirect('/');
 };
+
 export const getEdit = (req, res) => {
   return res.render('edit-profile', { pageTitle: 'Edit Profile' });
 };
